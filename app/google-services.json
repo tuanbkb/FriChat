@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "342846992593",
+    "project_id": "frichat-9a2f9",
+    "storage_bucket": "frichat-9a2f9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342846992593:android:314934c27c69364f3815f0",
+        "android_client_info": {
+          "package_name": "com.example.frichat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGqQXNa58jIBiwxSY8gz8iOkhkYiq816U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

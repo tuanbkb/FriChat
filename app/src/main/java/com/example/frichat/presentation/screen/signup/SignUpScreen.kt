@@ -14,27 +14,27 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.frichat.R
 import com.example.frichat.presentation.component.AuthTextField
 import com.example.frichat.ui.theme.AppTheme
 
 @Composable
 fun SignUpScreen(
-    viewModel: SignUpViewModel = viewModel(),
+    viewModel: SignUpViewModel = hiltViewModel(),
     onReturnClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
+
+    // TODO: Handle register result
 
     Scaffold(
         topBar = { SignUpAppBar(onReturnClick = onReturnClick) },
@@ -50,7 +50,7 @@ fun SignUpScreen(
             )
             Button(
                 onClick = {
-                    // TODO: Sign Up Button Clicked
+                    viewModel.registerUser()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
