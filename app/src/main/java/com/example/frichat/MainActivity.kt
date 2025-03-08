@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.frichat.presentation.navigation.NavigationGraph
 import com.example.frichat.presentation.screen.login.LoginScreen
 import com.example.frichat.presentation.screen.signup.SignUpScreen
 import com.example.frichat.ui.theme.AppTheme
@@ -22,11 +25,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val navController : NavHostController = rememberNavController()
             AppTheme {
-                LoginScreen(
-                    onForgotPasswordClick = {},
-                    onSignUpClick = {},
-                    onLoginSuccess = {}
+                NavigationGraph(
+                    navController = navController
                 )
             }
         }

@@ -39,7 +39,6 @@ import com.example.frichat.ui.theme.AppTheme
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
     onReturnClick: () -> Unit,
-    onRegisterSuccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
@@ -91,7 +90,7 @@ fun SignUpScreen(
     }
 
     if (state.showDialog) {
-        SignUpSuccessDialog(viewModel = viewModel, onRegisterSuccess = onRegisterSuccess)
+        SignUpSuccessDialog(viewModel = viewModel, onRegisterSuccess = onReturnClick)
     }
 }
 
@@ -183,7 +182,7 @@ fun SignUpSuccessDialog(
 fun SignUpScreenPreview() {
     AppTheme {
         SignUpScreen(
-            onReturnClick = {}, onRegisterSuccess = {}
+            onReturnClick = {}
         )
     }
 }
