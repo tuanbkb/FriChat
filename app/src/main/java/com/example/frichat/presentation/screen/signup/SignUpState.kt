@@ -7,5 +7,7 @@ data class SignUpState(
     val username: String = "",
     val password: String = "",
     val confirmPassword: String = "",
-    val registerState: AuthResult = AuthResult.Idle
+    val registerState: AuthResult = AuthResult.Idle,
+    val errorMessage: String = "",
+    val showDialog: Boolean = false
 )

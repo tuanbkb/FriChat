@@ -1,7 +1,6 @@
 package com.example.frichat.data.repository
 
 import com.example.frichat.data.model.AuthResult
-import com.example.frichat.data.model.User
 import com.example.frichat.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -17,15 +16,19 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             val userId = result.user?.uid ?: return AuthResult.Error("Error retrieving UID")
-            saveUserToFirestore(User(email, username), userId)
+            saveUserToFirestore(email, username, userId)
             AuthResult.Success
         } catch (e: Exception) {
             AuthResult.Error(e.localizedMessage ?: "Unknown Error!")
         }
     }
 
-    override suspend fun saveUserToFirestore(user: User, userId: String): AuthResult {
+    override suspend fun saveUserToFirestore(email: String, username: String, userId: String): AuthResult {
         return try {
+            val user = mapOf(
+                email to "email",
+                username to "username"
+            )
             firestore.collection("users").document(userId).set(user).await()
             AuthResult.Success
         } catch (e: Exception) {

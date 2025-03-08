@@ -35,16 +35,29 @@ class SignUpViewModel @Inject constructor(private val registerUseCase: RegisterU
         _state.update { it.copy(confirmPassword = confirmPassword) }
     }
 
-    fun resetState() {
-        _state.value = SignUpState("", "", "", "")
+    fun setErrorMessage(errorMessage: String) {
+        _state.update { it.copy(errorMessage = errorMessage) }
     }
 
     fun registerUser() {
         viewModelScope.launch {
-            _state.update { it.copy(registerState = AuthResult.Loading) }
+            _state.update { it.copy(registerState = AuthResult.Loading, errorMessage = "") }
             val result =
-                registerUseCase(_state.value.email, _state.value.username, _state.value.password)
-            _state.update { it.copy(registerState = AuthResult.Success) }
+                registerUseCase(
+                    _state.value.email,
+                    _state.value.username,
+                    _state.value.password,
+                    _state.value.confirmPassword
+                )
+            _state.update { it.copy(registerState = result) }
         }
+    }
+
+    fun showDialog() {
+        _state.update { it.copy(showDialog = true) }
+    }
+
+    fun hideDialog() {
+        _state.update { it.copy(showDialog = false) }
     }
 }

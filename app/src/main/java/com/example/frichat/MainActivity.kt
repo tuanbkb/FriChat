@@ -24,7 +24,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 SignUpScreen(
-                    onReturnClick = {}
+                    onReturnClick = {},
+                    onRegisterSuccess = {}
                 )
             }
         }
