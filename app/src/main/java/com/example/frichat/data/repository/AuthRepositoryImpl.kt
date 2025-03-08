@@ -35,4 +35,13 @@ class AuthRepositoryImpl @Inject constructor(
             AuthResult.Error("Error saving user information: ${e.localizedMessage}")
         }
     }
+
+    override suspend fun loginUser(email: String, password: String): AuthResult {
+        return try {
+            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            AuthResult.Success
+        } catch (e: Exception) {
+            AuthResult.Error("Login credentials do not match any user" ?: "Unknown Error")
+        }
+    }
 }

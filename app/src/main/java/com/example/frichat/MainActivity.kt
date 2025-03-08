@@ -23,9 +23,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                SignUpScreen(
-                    onReturnClick = {},
-                    onRegisterSuccess = {}
+                LoginScreen(
+                    onForgotPasswordClick = {},
+                    onSignUpClick = {},
+                    onLoginSuccess = {}
                 )
             }
         }

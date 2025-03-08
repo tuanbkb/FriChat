@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,14 +28,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.frichat.R
+import com.example.frichat.data.model.AuthResult
 import com.example.frichat.presentation.component.AuthTextField
+import com.example.frichat.presentation.component.CircularProgressIndicatorFullSize
 import com.example.frichat.ui.theme.AppTheme
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
+    viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onSignUpClick: () -> Unit,
@@ -41,53 +45,82 @@ fun LoginScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            LoginTitle()
-            Spacer(modifier = Modifier.height(16.dp))
-            AuthTextField(
-                label = "Email",
-                value = state.email,
-                onValueChange = { viewModel.onEmailChange(it) },
-            )
-            AuthTextField(
-                label = "Password",
-                value = state.password,
-                onValueChange = { viewModel.onPasswordChange(it) },
-                isPassword = true,
-                imeAction = ImeAction.Done
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            LoginButtonRow(
-                onLoginClick = {
-                    //TODO:on login click
-                },
-                onForgotPasswordClick = onForgotPasswordClick
-            )
-        }
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Don't have an account?")
-            OutlinedButton(
-                onClick = onSignUpClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Sign Up", modifier = Modifier.padding(4.dp))
+    LaunchedEffect(key1 = state.loginState) {
+        state.loginState.let {
+            when (it) {
+                is AuthResult.Success -> onLoginSuccess()
+                is AuthResult.Error -> viewModel.setErrorMessage(it.message)
+                else -> {}
             }
         }
+    }
+
+    Scaffold(
+        modifier = modifier
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                LoginTitle()
+                Spacer(modifier = Modifier.height(16.dp))
+                AuthTextField(
+                    label = "Email",
+                    value = state.email,
+                    onValueChange = { viewModel.onEmailChange(it) },
+                )
+                AuthTextField(
+                    label = "Password",
+                    value = state.password,
+                    onValueChange = { viewModel.onPasswordChange(it) },
+                    isPassword = true,
+                    imeAction = ImeAction.Done
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                LoginButtonRow(
+                    onLoginClick = {
+                        viewModel.onLoginClick()
+                    },
+                    onForgotPasswordClick = onForgotPasswordClick
+                )
+                if (state.errorMessage.isNotBlank()) {
+                    Text(
+                        text = state.errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Don't have an account?")
+                OutlinedButton(
+                    onClick = onSignUpClick,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Sign Up", modifier = Modifier.padding(4.dp))
+                }
+            }
+        }
+    }
+
+    if (state.loginState is AuthResult.Loading) {
+        CircularProgressIndicatorFullSize()
     }
 }
 
