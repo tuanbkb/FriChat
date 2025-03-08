@@ -6,4 +6,5 @@ interface AuthRepository{
     suspend fun registerUser(email: String, username: String, password: String): AuthResult
     suspend fun saveUserToFirestore(email: String, username: String, userId: String): AuthResult
     suspend fun loginUser(email: String, password: String): AuthResult
+    suspend fun resetPassword(email: String): AuthResult
 }

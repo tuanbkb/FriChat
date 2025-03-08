@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.frichat.presentation.screen.login.LoginScreen
+import com.example.frichat.presentation.screen.resetpassword.ResetPasswordScreen
 import com.example.frichat.presentation.screen.signup.SignUpScreen
 
 @Composable
@@ -18,7 +19,7 @@ fun NavigationGraph(
         composable(Screen.LoginScreen.route) {
             LoginScreen(
                 onLoginSuccess = {},
-                onForgotPasswordClick = {},
+                onForgotPasswordClick = { navController.navigate(Screen.ResetPasswordScreen.route) },
                 onSignUpClick = { navController.navigate(Screen.SignUpScreen.route) }
             )
         }
@@ -26,6 +27,12 @@ fun NavigationGraph(
         composable(Screen.SignUpScreen.route) {
             SignUpScreen(
                 onReturnClick = { navController.navigate(Screen.LoginScreen.route) },
+            )
+        }
+
+        composable(Screen.ResetPasswordScreen.route) {
+            ResetPasswordScreen(
+                onReturnClick = { navController.navigate(Screen.LoginScreen.route) }
             )
         }
     }

@@ -5,8 +5,8 @@ import com.example.frichat.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 import javax.inject.Inject
+import kotlin.Exception
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
@@ -41,7 +41,16 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithEmailAndPassword(email, password).await()
             AuthResult.Success
         } catch (e: Exception) {
-            AuthResult.Error("Login credentials do not match any user" ?: "Unknown Error")
+            AuthResult.Error("Login credentials do not match any user")
+        }
+    }
+
+    override suspend fun resetPassword(email: String): AuthResult {
+        return try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            AuthResult.Success
+        } catch (e: Exception) {
+            AuthResult.Error("Email not linked to any user")
         }
     }
 }
