@@ -26,8 +26,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun saveUserToFirestore(email: String, username: String, userId: String): AuthResult {
         return try {
             val user = mapOf(
-                email to "email",
-                username to "username"
+                "email" to email,
+                "username" to username
             )
             firestore.collection("users").document(userId).set(user).await()
             AuthResult.Success
@@ -38,7 +38,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun loginUser(email: String, password: String): AuthResult {
         return try {
-            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            firebaseAuth.signInWithEmailAndPassword(email, password).await()
             AuthResult.Success
         } catch (e: Exception) {
             AuthResult.Error("Login credentials do not match any user" ?: "Unknown Error")
