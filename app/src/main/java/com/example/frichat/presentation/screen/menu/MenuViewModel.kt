@@ -22,7 +22,7 @@ class MenuViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val currentUser = getCurrentLoginUserUseCase.invoke().getOrNull()
-                ?: User("", "", "")
+                ?: User("", "", "", "")
             _state.update { it.copy(user = currentUser) }
         }
     }

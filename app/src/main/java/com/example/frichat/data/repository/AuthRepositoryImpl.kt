@@ -26,8 +26,10 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun saveUserToFirestore(email: String, username: String, userId: String): AuthResult {
         return try {
             val user = mapOf(
+                "uid" to userId,
                 "email" to email,
-                "username" to username
+                "username" to username,
+                "pp" to ""
             )
             firestore.collection("users").document(userId).set(user).await()
             AuthResult.Success
