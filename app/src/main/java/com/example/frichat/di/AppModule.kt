@@ -1,7 +1,9 @@
 package com.example.frichat.di
 
 import com.example.frichat.data.repository.AuthRepositoryImpl
+import com.example.frichat.data.repository.UserRepositoryImpl
 import com.example.frichat.domain.repository.AuthRepository
+import com.example.frichat.domain.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -25,4 +27,9 @@ object AppModule {
     @Singleton
     fun provideAuthRepository(firebaseAuth: FirebaseAuth, firestore: FirebaseFirestore): AuthRepository =
         AuthRepositoryImpl(firebaseAuth, firestore)
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(firebaseAuth: FirebaseAuth, firestore: FirebaseFirestore): UserRepository =
+        UserRepositoryImpl(firebaseAuth, firestore)
 }

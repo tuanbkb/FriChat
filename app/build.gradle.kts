@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.coil.compose)
     kapt(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
