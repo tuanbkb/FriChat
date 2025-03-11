@@ -1,7 +1,10 @@
 package com.example.frichat.data.repository
 
 import com.example.frichat.data.model.AuthResult
+import com.example.frichat.domain.model.User
 import com.example.frichat.domain.repository.AuthRepository
+import com.example.frichat.domain.repository.UserRepository
+import com.example.frichat.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -10,9 +13,14 @@ import kotlin.Exception
 
 class AuthRepositoryImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val userRepository: UserRepository
 ) : AuthRepository {
-    override suspend fun registerUser(email: String, username: String, password: String): AuthResult {
+    override suspend fun registerUser(
+        email: String,
+        username: String,
+        password: String
+    ): AuthResult {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             val userId = result.user?.uid ?: return AuthResult.Error("Error retrieving UID")
@@ -23,7 +31,11 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveUserToFirestore(email: String, username: String, userId: String): AuthResult {
+    override suspend fun saveUserToFirestore(
+        email: String,
+        username: String,
+        userId: String
+    ): AuthResult {
         return try {
             val user = mapOf(
                 "uid" to userId,
@@ -38,9 +50,16 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun loginUser(email: String, password: String): AuthResult {
+    override suspend fun loginUser(
+        email: String,
+        password: String,
+        userViewModel: UserViewModel
+    ): AuthResult {
         return try {
             firebaseAuth.signInWithEmailAndPassword(email, password).await()
+            val user = userRepository.getCurrentLoginUser().getOrNull()
+                ?: User("", "", "", "")
+            userViewModel.setUser(user)
             AuthResult.Success
         } catch (e: Exception) {
             AuthResult.Error("Login credentials do not match any user")

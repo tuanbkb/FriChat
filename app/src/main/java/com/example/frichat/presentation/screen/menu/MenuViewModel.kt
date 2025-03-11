@@ -1,5 +1,6 @@
 package com.example.frichat.presentation.screen.menu
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frichat.domain.model.User
@@ -14,18 +15,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MenuViewModel @Inject constructor(
-    private val getCurrentLoginUserUseCase: GetCurrentLoginUserUseCase
+    private val getCurrentLoginUserUseCase: GetCurrentLoginUserUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(MenuState())
     val state: StateFlow<MenuState> = _state.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            val currentUser = getCurrentLoginUserUseCase.invoke().getOrNull()
-                ?: User("", "", "", "")
-            _state.update { it.copy(user = currentUser) }
-        }
-    }
+//    init {
+//        viewModelScope.launch {
+//            val currentUser = getCurrentLoginUserUseCase.invoke().getOrNull()
+//                ?: User("", "", "", "")
+//            _state.update { it.copy(user = currentUser) }
+//        }
+//    }
 
 
 }

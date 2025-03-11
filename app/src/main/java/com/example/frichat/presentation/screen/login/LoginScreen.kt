@@ -29,15 +29,18 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frichat.R
 import com.example.frichat.data.model.AuthResult
 import com.example.frichat.presentation.component.AuthTextField
 import com.example.frichat.presentation.component.CircularProgressIndicatorFullSize
 import com.example.frichat.ui.theme.AppTheme
+import com.example.frichat.viewmodel.UserViewModel
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
+    userViewModel: UserViewModel,
     onLoginSuccess: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onSignUpClick: () -> Unit,
@@ -89,7 +92,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 LoginButtonRow(
                     onLoginClick = {
-                        viewModel.onLoginClick()
+                        viewModel.onLoginClick(userViewModel = userViewModel)
                     },
                     onForgotPasswordClick = onForgotPasswordClick
                 )
@@ -179,7 +182,8 @@ fun LoginScreenPreview() {
         LoginScreen(
             onForgotPasswordClick = {},
             onSignUpClick = {},
-            onLoginSuccess = {}
+            onLoginSuccess = {},
+            userViewModel = viewModel()
         )
     }
 }

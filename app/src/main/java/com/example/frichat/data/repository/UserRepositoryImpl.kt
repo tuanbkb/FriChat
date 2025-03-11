@@ -1,5 +1,6 @@
 package com.example.frichat.data.repository
 
+import android.net.Uri
 import android.util.Log
 import com.example.frichat.data.mapper.UserMapper
 import com.example.frichat.data.model.UserDTO

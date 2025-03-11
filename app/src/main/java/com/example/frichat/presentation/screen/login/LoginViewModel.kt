@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frichat.data.model.AuthResult
 import com.example.frichat.domain.usecase.LoginUseCase
+import com.example.frichat.viewmodel.UserViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,10 +26,10 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
         _state.update { it.copy(password = password) }
     }
 
-    fun onLoginClick() {
+    fun onLoginClick(userViewModel: UserViewModel) {
         viewModelScope.launch {
             _state.update { it.copy(loginState = AuthResult.Loading, errorMessage = "") }
-            val result = loginUseCase.invoke(_state.value.email, _state.value.password)
+            val result = loginUseCase.invoke(_state.value.email, _state.value.password, userViewModel)
             _state.update { it.copy(loginState = result) }
         }
     }

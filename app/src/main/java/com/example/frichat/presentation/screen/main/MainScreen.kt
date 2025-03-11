@@ -24,26 +24,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.frichat.R
 import com.example.frichat.presentation.navigation.MainScreenNavigationGraph
+import com.example.frichat.viewmodel.UserViewModel
 
 @Composable
 fun MainScreen(
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
     val navController: NavHostController = rememberNavController()
-
     Scaffold(
-        topBar = { MainTopBar() },
+//        topBar = { MainTopBar() },
         bottomBar = { MainBottomBar(navController = navController) },
         modifier = modifier
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             MainScreenNavigationGraph(
                 navController = navController,
+                userViewModel = userViewModel
             )
         }
     }
@@ -80,20 +83,20 @@ fun MainBottomBar(navController: NavController, modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainTopBar(
-    modifier: Modifier = Modifier
-) {
-    TopAppBar(
-        title = {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
-            )
-        },
-        modifier = modifier
-    )
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun MainTopBar(
+//    modifier: Modifier = Modifier
+//) {
+//    TopAppBar(
+//        title = {
+//            Text(
+//                text = stringResource(R.string.app_name),
+//                style = MaterialTheme.typography.displaySmall,
+//                fontWeight = FontWeight.Bold,
+//                color = MaterialTheme.colorScheme.primary
+//            )
+//        },
+//        modifier = modifier
+//    )
+//}

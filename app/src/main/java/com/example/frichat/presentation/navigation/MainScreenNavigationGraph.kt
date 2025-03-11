@@ -7,10 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.frichat.presentation.screen.chatlist.ChatListScreen
 import com.example.frichat.presentation.screen.menu.MenuScreen
+import com.example.frichat.viewmodel.UserViewModel
 
 @Composable
 fun MainScreenNavigationGraph(
     navController: NavHostController,
+    userViewModel: UserViewModel
 ) {
     NavHost(
         navController = navController,
@@ -21,7 +23,7 @@ fun MainScreenNavigationGraph(
         }
 
         composable("Menu") {
-            MenuScreen()
+            MenuScreen(userViewModel = userViewModel)
         }
     }
 }
