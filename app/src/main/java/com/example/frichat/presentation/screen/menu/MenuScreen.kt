@@ -42,11 +42,9 @@ import com.example.frichat.viewmodel.UserViewModel
 
 @Composable
 fun MenuScreen(
-    viewModel: MenuViewModel = hiltViewModel(),
     userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.state.collectAsState()
     val user by userViewModel.user.collectAsState()
 //    val user = User("Test", "Test", "test", "test")
 

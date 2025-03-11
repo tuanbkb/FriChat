@@ -19,7 +19,7 @@ fun MainScreenNavigationGraph(
         startDestination = "Chat"
     ) {
         composable("Chat") {
-            ChatListScreen()
+            ChatListScreen(userViewModel = userViewModel)
         }
 
         composable("Menu") {

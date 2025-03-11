@@ -43,7 +43,7 @@ fun MainScreen(
         bottomBar = { MainBottomBar(navController = navController) },
         modifier = modifier
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
             MainScreenNavigationGraph(
                 navController = navController,
                 userViewModel = userViewModel
