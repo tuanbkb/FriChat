@@ -3,6 +3,7 @@ package com.example.frichat.presentation.screen.chatlist
 import android.util.Log
 import android.widget.Space
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,13 +46,13 @@ import java.util.Date
 fun ChatListScreen(
     userViewModel: UserViewModel,
     chatListViewModel: ChatListViewModel = hiltViewModel(),
+    onChatClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by chatListViewModel.state.collectAsState()
     val user by userViewModel.user.collectAsState()
 
     LaunchedEffect(Unit) {
-        Log.d("DEBUG","Launched Effect performed, uid: ${user.uid}")
         chatListViewModel.listenToChat(user.uid)
     }
     // Dummy database
@@ -90,16 +91,20 @@ fun ChatListScreen(
                 .fillMaxWidth()
         ) {
             items(state.chats) { chat ->
-                ChatItem(chat = chat)
+                ChatItem(chat = chat, onClick = onChatClick)
             }
         }
     }
 }
 
 @Composable
-fun ChatItem(chat: Chat, modifier: Modifier = Modifier) {
+fun ChatItem(
+    chat: Chat,
+    onClick: (String, String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier = modifier.height(80.dp),
+        modifier = modifier.height(80.dp).clickable { onClick(chat.id, chat.targetUser.uid) },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -141,10 +146,10 @@ fun ChatItem(chat: Chat, modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ChatListScreenPreview() {
-    AppTheme {
-        ChatListScreen(viewModel())
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ChatListScreenPreview() {
+//    AppTheme {
+//        ChatListScreen(viewModel())
+//    }
+//}

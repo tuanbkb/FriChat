@@ -13,7 +13,6 @@ class ListenToChatListUseCase @Inject constructor(private val chatRepository: Ch
         viewModelScope: CoroutineScope,
         onChatUpdate: (List<Chat>) -> Unit
     ) : ListenerRegistration {
-        Log.d("DEBUG", "Launched from use case")
         return chatRepository.listenChatList(uid, viewModelScope, onChatUpdate)
     }
 }

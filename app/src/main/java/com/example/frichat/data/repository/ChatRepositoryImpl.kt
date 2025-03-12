@@ -25,20 +25,15 @@ class ChatRepositoryImpl @Inject constructor(
         onChatUpdate: (List<Chat>) -> Unit
     ): ListenerRegistration {
         val ref = firestore.collection("chats").whereArrayContains("users", uid)
-        Log.d("DEBUG", "UID: $uid")
-        Log.d("DEBUG", "Ref: ${ref.get().await().documents}")
         return firestore.collection("chats").whereArrayContains("users", uid)
             .addSnapshotListener { snapshot, error ->
-                Log.d("DEBUG", "Snapshot: ${snapshot?.documents?.toString()}")
                 if (error != null) return@addSnapshotListener
 
-                Log.d("DEBUG", "No error")
                 viewModelScope.launch {
                     val updatedChat = snapshot?.documents?.mapNotNull { document ->
                         val temp = document.toObject(ChatDTO::class.java) ?: ChatDTO()
                         ChatMapper.mapToDomain(temp, uid, userRepository)
                     } ?: emptyList()
-                    Log.d("DEBUG", updatedChat.toString())
                     onChatUpdate(updatedChat)
                 }
             }

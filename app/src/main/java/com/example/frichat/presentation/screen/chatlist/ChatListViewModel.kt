@@ -27,10 +27,8 @@ class ChatListViewModel @Inject constructor(
 
     fun listenToChat(uid: String) {
         viewModelScope.launch {
-            Log.d("DEBUG", "Launched from viewmodel, uid: $uid")
             chatListener = listenToChatListUseCase.invoke(uid, viewModelScope) { chatList ->
                 _state.update { it.copy(chats = chatList) }
-                Log.d("DEBUG", "Update complete")
             }
         }
     }

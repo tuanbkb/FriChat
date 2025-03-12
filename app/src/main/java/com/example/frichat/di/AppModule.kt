@@ -2,9 +2,11 @@ package com.example.frichat.di
 
 import com.example.frichat.data.repository.AuthRepositoryImpl
 import com.example.frichat.data.repository.ChatRepositoryImpl
+import com.example.frichat.data.repository.MessageRepositoryImpl
 import com.example.frichat.data.repository.UserRepositoryImpl
 import com.example.frichat.domain.repository.AuthRepository
 import com.example.frichat.domain.repository.ChatRepository
+import com.example.frichat.domain.repository.MessageRepository
 import com.example.frichat.domain.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -49,4 +51,11 @@ object AppModule {
         userRepository: UserRepository
     ): ChatRepository =
         ChatRepositoryImpl(firestore, userRepository)
+
+    @Provides
+    @Singleton
+    fun provideMessageRepository(
+        firestore: FirebaseFirestore
+    ) : MessageRepository =
+        MessageRepositoryImpl(firestore)
 }

@@ -35,6 +35,7 @@ import com.example.frichat.viewmodel.UserViewModel
 @Composable
 fun MainScreen(
     userViewModel: UserViewModel,
+    onChatClick: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val navController: NavHostController = rememberNavController()
@@ -46,7 +47,8 @@ fun MainScreen(
         Box(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
             MainScreenNavigationGraph(
                 navController = navController,
-                userViewModel = userViewModel
+                userViewModel = userViewModel,
+                onChatClick = onChatClick
             )
         }
     }
