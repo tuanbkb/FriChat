@@ -8,4 +8,5 @@ import java.net.URI
 interface UserRepository {
     suspend fun getUserFromUid(uid: String): Result<User>
     suspend fun getCurrentLoginUser(): Result<User>
+    suspend fun changeUsername(uid: String, username: String): Result<Unit>
 }

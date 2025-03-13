@@ -38,4 +38,15 @@ class UserRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun changeUsername(uid: String, username: String): Result<Unit> {
+        return try {
+            firestore.collection("users").document(uid).update(
+                mapOf("username" to username)
+            ).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

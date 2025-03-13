@@ -17,6 +17,10 @@ class UserViewModel: ViewModel() {
         _user.value = user
     }
 
+    fun setUsername(username: String) {
+        _user.update { it.copy(username = username) }
+    }
+
     fun setProfilePicture(profilePicture: String) {
         _user.update { it.copy(profilePicture = profilePicture) }
     }

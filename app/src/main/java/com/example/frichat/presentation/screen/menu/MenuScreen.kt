@@ -16,12 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -29,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.VerticalAlignmentLine
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,8 +54,8 @@ fun MenuScreen(
     onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val state by menuViewModel.state.collectAsState()
     val user by userViewModel.user.collectAsState()
-//    val user = User("Test", "Test", "test", "test")
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +86,7 @@ fun MenuScreen(
             MenuItem(
                 icon = R.drawable.edit,
                 text = "Change username",
-                onClick = {}
+                onClick = { menuViewModel.showDialog() }
             )
             MenuItem(
                 icon = R.drawable.logout,
@@ -91,6 +97,13 @@ fun MenuScreen(
                 }
             )
         }
+    }
+
+    if (state.showDialog) {
+        ChangeUsernameDialog(
+            viewModel = menuViewModel,
+            userViewModel = userViewModel
+        )
     }
 }
 
@@ -116,6 +129,39 @@ fun MenuItem(
         Spacer(modifier = Modifier.width(16.dp))
         Text(text = text, style = MaterialTheme.typography.titleMedium)
     }
+}
+
+@Composable
+fun ChangeUsernameDialog(
+    viewModel: MenuViewModel,
+    userViewModel: UserViewModel,
+    modifier : Modifier = Modifier
+) {
+    val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.onUsernameChange(userViewModel.user.value.username)
+    }
+
+    AlertDialog(
+        onDismissRequest = { viewModel.hideDialog() },
+        confirmButton = { TextButton(
+            onClick = { viewModel.changeUsername(userViewModel, context) }
+        ) {
+            Text(text = "Confirm")
+        } },
+        title = { Text(text = "Change Username") },
+        text = { Column {
+            Text(text = "Enter your new username:")
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = state.username,
+                onValueChange = { viewModel.onUsernameChange(it) }
+            )
+        } },
+        modifier = modifier
+    )
 }
 
 //@Preview(showBackground = true)
