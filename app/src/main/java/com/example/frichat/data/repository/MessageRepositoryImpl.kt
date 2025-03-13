@@ -36,10 +36,18 @@ class MessageRepositoryImpl @Inject constructor(
 
     override suspend fun sendMessage(chatId: String, message: Message): Result<Unit> {
         return try {
+            val messageDTO = MessageMapper.mapToDTO(message)
             firestore.collection("chats").document(chatId)
                 .collection("messages")
-                .add(MessageMapper.mapToDTO(message))
+                .add(messageDTO)
                 .await()
+            firestore.collection("chats").document(chatId)
+                .update(
+                    mapOf(
+                        "lastMessage" to messageDTO.text,
+                        "updateAt" to messageDTO.timestamp
+                    )
+                )
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
