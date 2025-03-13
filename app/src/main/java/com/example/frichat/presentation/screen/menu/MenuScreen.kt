@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.frichat.R
 import com.example.frichat.domain.model.User
@@ -42,7 +43,9 @@ import com.example.frichat.viewmodel.UserViewModel
 
 @Composable
 fun MenuScreen(
+    menuViewModel: MenuViewModel = hiltViewModel(),
     userViewModel: UserViewModel,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val user by userViewModel.user.collectAsState()
@@ -82,7 +85,10 @@ fun MenuScreen(
             MenuItem(
                 icon = R.drawable.logout,
                 text = "Logout",
-                onClick = {}
+                onClick = {
+                    menuViewModel.logout()
+                    onLogout()
+                }
             )
         }
     }
@@ -98,7 +104,7 @@ fun MenuItem(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .clickable { onClick }
+            .clickable { onClick() }
             .fillMaxWidth()
             .padding(16.dp)
     ) {

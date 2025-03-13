@@ -13,7 +13,8 @@ import com.example.frichat.viewmodel.UserViewModel
 fun MainScreenNavigationGraph(
     navController: NavHostController,
     userViewModel: UserViewModel,
-    onChatClick: (String, String) -> Unit
+    onChatClick: (String, String) -> Unit,
+    onLogout: () -> Unit,
 ) {
     NavHost(
         navController = navController,
@@ -24,7 +25,7 @@ fun MainScreenNavigationGraph(
         }
 
         composable("Menu") {
-            MenuScreen(userViewModel = userViewModel)
+            MenuScreen(userViewModel = userViewModel, onLogout = onLogout)
         }
     }
 }
