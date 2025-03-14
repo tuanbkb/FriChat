@@ -1,8 +1,5 @@
 package com.example.frichat.presentation.screen.menu
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,9 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -32,19 +26,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
 import com.example.frichat.R
-import com.example.frichat.domain.model.User
-import com.example.frichat.ui.theme.AppTheme
+import com.example.frichat.presentation.component.AuthTextField
+import com.example.frichat.presentation.component.CircularProgressIndicatorFullSize
 import com.example.frichat.viewmodel.UserViewModel
 
 @Composable
@@ -89,6 +80,11 @@ fun MenuScreen(
                 onClick = { menuViewModel.showDialog() }
             )
             MenuItem(
+                icon = R.drawable.security,
+                text = "Change password",
+                onClick = { menuViewModel.showChangePasswordDialog() }
+            )
+            MenuItem(
                 icon = R.drawable.logout,
                 text = "Logout",
                 onClick = {
@@ -103,6 +99,12 @@ fun MenuScreen(
         ChangeUsernameDialog(
             viewModel = menuViewModel,
             userViewModel = userViewModel
+        )
+    }
+
+    if (state.showChangePasswordDialog) {
+        ChangePasswordDialog(
+            viewModel = menuViewModel
         )
     }
 }
@@ -135,7 +137,7 @@ fun MenuItem(
 fun ChangeUsernameDialog(
     viewModel: MenuViewModel,
     userViewModel: UserViewModel,
-    modifier : Modifier = Modifier
+    modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
@@ -146,28 +148,90 @@ fun ChangeUsernameDialog(
 
     AlertDialog(
         onDismissRequest = { viewModel.hideDialog() },
-        confirmButton = { TextButton(
-            onClick = { viewModel.changeUsername(userViewModel, context) }
-        ) {
-            Text(text = "Confirm")
-        } },
+        confirmButton = {
+            TextButton(
+                onClick = { viewModel.changeUsername(userViewModel, context) }
+            ) {
+                Text(text = "Confirm")
+            }
+        },
         title = { Text(text = "Change Username") },
-        text = { Column {
-            Text(text = "Enter your new username:")
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedTextField(
-                value = state.username,
-                onValueChange = { viewModel.onUsernameChange(it) }
-            )
-        } },
+        text = {
+            Column {
+                Text(text = "Enter your new username:")
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = state.username,
+                    onValueChange = { viewModel.onUsernameChange(it) }
+                )
+            }
+        },
         modifier = modifier
     )
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun MenuScreenPreview() {
-//    AppTheme {
-//        MenuScreen()
-//    }
-//}
+@Composable
+fun ChangePasswordDialog(
+    viewModel: MenuViewModel,
+    modifier: Modifier = Modifier
+) {
+    val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
+    AlertDialog(
+        onDismissRequest = { viewModel.hideChangePasswordDialog() },
+        title = { Text(text = "Change password") },
+        text = {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    AuthTextField(
+                        label = "Old Password",
+                        value = state.oldPassword,
+                        onValueChange = { viewModel.onOldPasswordChange(it) },
+                        isPassword = true
+                    )
+                    AuthTextField(
+                        label = "New Password",
+                        value = state.newPassword,
+                        onValueChange = { viewModel.onNewPasswordChange(it) },
+                        isPassword = true
+                    )
+                    AuthTextField(
+                        label = "Confirm Password",
+                        value = state.confirmPassword,
+                        onValueChange = { viewModel.onConfirmPasswordChange(it) },
+                        isPassword = true,
+                        imeAction = ImeAction.Done
+                    )
+                    Text(
+                        text = state.errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                if (state.loading) {
+                    CircularProgressIndicatorFullSize(modifier.matchParentSize())
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = { viewModel.changePassword(context = context) }
+            ) {
+                Text(text = "Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { viewModel.hideChangePasswordDialog() }
+            ) {
+                Text(text = "Cancel")
+            }
+        },
+        modifier = modifier
+    )
+}

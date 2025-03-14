@@ -5,6 +5,7 @@ import com.example.frichat.domain.model.User
 import com.example.frichat.domain.repository.AuthRepository
 import com.example.frichat.domain.repository.UserRepository
 import com.example.frichat.viewmodel.UserViewModel
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -72,6 +73,20 @@ class AuthRepositoryImpl @Inject constructor(
             AuthResult.Success
         } catch (e: Exception) {
             AuthResult.Error("Email not linked to any user")
+        }
+    }
+
+    override suspend fun changePassword(oldPassword: String, newPassword: String): AuthResult {
+        val user = firebaseAuth.currentUser ?: return AuthResult.Error("User not sign in")
+        val email = user.email ?: return AuthResult.Error("Email not found!")
+        val credential = EmailAuthProvider.getCredential(email, oldPassword)
+        return try {
+            user.reauthenticate(credential).await()
+            user.updatePassword(newPassword).await()
+            AuthResult.Success
+        } catch (e: Exception) {
+            e.printStackTrace()
+            AuthResult.Error("Old password is not correct")
         }
     }
 }

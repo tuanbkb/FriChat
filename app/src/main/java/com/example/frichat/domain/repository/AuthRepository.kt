@@ -8,4 +8,5 @@ interface AuthRepository{
     suspend fun saveUserToFirestore(email: String, username: String, userId: String): AuthResult
     suspend fun loginUser(email: String, password: String, userViewModel: UserViewModel): AuthResult
     suspend fun resetPassword(email: String): AuthResult
+    suspend fun changePassword(oldPassword: String, newPassword: String): AuthResult
 }
