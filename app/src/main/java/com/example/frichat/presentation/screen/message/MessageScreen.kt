@@ -1,9 +1,7 @@
 package com.example.frichat.presentation.screen.message
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,12 +16,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CutCornerShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,8 +27,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,17 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.frichat.domain.model.Message
-import com.example.frichat.ui.theme.AppTheme
+import com.example.frichat.util.TimeUtil
 import com.example.frichat.viewmodel.UserViewModel
-import java.util.Date
 
 @Composable
 fun MessageScreen(
@@ -84,7 +73,8 @@ fun MessageScreen(
                 modifier = modifier
                     .weight(1f)
                     .fillMaxWidth(),
-                messageList = state.messageList
+                messageList = state.messageList,
+                viewModel = viewModel
             )
             Spacer(modifier = modifier.height(16.dp))
             MessageField(
@@ -105,43 +95,65 @@ fun MessageScreen(
 fun MessageList(
     targetId: String,
     messageList: List<Message>,
+    viewModel: MessageViewModel,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        reverseLayout = true,
-        modifier = modifier
+        modifier = modifier,
+        reverseLayout = true
     ) {
         items(messageList) { message ->
-            Box(
-                contentAlignment = if (targetId == message.senderId) Alignment.CenterStart
-                else Alignment.CenterEnd,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
-            ) {
-                MessageItem(message = message, targetId = targetId)
-            }
+            MessageItem(targetId = targetId, message = message, viewModel = viewModel)
         }
     }
 }
 
 @Composable
-fun MessageItem(message: Message, targetId: String, modifier: Modifier = Modifier) {
-    Box(
+fun MessageItem(
+    message: Message,
+    targetId: String,
+    viewModel: MessageViewModel,
+    modifier: Modifier = Modifier
+) {
+    val state = viewModel.state.collectAsState()
+    Column(
         modifier = modifier
-            .background(
-                color = if (targetId == message.senderId) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.large
-            )
-            .widthIn(max = 280.dp)
+            .fillMaxWidth()
+            .padding(4.dp)
     ) {
-        Text(
-            text = message.text,
-            modifier = Modifier.padding(8.dp),
-            color = if (message.senderId == targetId) MaterialTheme.colorScheme.onPrimary
-            else MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = if (targetId == message.senderId) Alignment.CenterStart
+            else Alignment.CenterEnd,
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        color = if (targetId == message.senderId) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialTheme.shapes.large
+                    )
+                    .widthIn(max = 280.dp)
+                    .clickable { viewModel.onMessageClick(message.timestamp) }
+                    .clip(shape = MaterialTheme.shapes.large)
+            ) {
+                Text(
+                    text = message.text,
+                    modifier = Modifier.padding(8.dp),
+                    color = if (message.senderId == targetId) MaterialTheme.colorScheme.onPrimary
+                    else MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        }
+
+        if (state.value.showTimeMessage == message.timestamp) {
+            Text(
+                text = TimeUtil.formatLastUpdateTime(message.timestamp),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 

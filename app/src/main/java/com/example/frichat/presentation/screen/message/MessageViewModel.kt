@@ -3,8 +3,6 @@ package com.example.frichat.presentation.screen.message
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.frichat.domain.model.User
-import com.example.frichat.domain.repository.MessageRepository
-import com.example.frichat.domain.repository.UserRepository
 import com.example.frichat.domain.usecase.GetUserUseCase
 import com.example.frichat.domain.usecase.ListenToMessageUseCase
 import com.example.frichat.domain.usecase.SendMessageUseCase
@@ -15,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,6 +58,14 @@ class MessageViewModel @Inject constructor(
             listenToMessageUseCase.invoke(chatId = chatId) { messageList ->
                 _state.update { it.copy(messageList = messageList) }
             }
+        }
+    }
+
+    fun onMessageClick(messageTimestamp: Date) {
+        if (_state.value.showTimeMessage != messageTimestamp) {
+            _state.update { it.copy(showTimeMessage = messageTimestamp)}
+        } else {
+            _state.update { it.copy(showTimeMessage = null) }
         }
     }
 
