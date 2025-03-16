@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.frichat.presentation.screen.chatlist.ChatListScreen
 import com.example.frichat.presentation.screen.menu.MenuScreen
+import com.example.frichat.presentation.screen.search.SearchScreen
 import com.example.frichat.viewmodel.UserViewModel
 
 @Composable
@@ -28,6 +29,10 @@ fun MainScreenNavigationGraph(
                 userViewModel = userViewModel,
                 onLogout = onLogout
             )
+        }
+
+        composable("Search") {
+            SearchScreen()
         }
     }
 }

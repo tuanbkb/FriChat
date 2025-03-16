@@ -29,11 +29,12 @@ fun MainScreen(
 ) {
     val navController: NavHostController = rememberNavController()
     Scaffold(
-//        topBar = { MainTopBar() },
         bottomBar = { MainBottomBar(navController = navController) },
         modifier = modifier
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
+        Box(modifier = Modifier
+            .padding(innerPadding)
+            .padding(16.dp)) {
             MainScreenNavigationGraph(
                 navController = navController,
                 userViewModel = userViewModel,
@@ -46,9 +47,9 @@ fun MainScreen(
 
 @Composable
 fun MainBottomBar(navController: NavController, modifier: Modifier = Modifier) {
-    val screens = listOf("Chat", "Menu")
+    val screens = listOf("Chat", "Search", "Menu")
     val currentScreen = remember { mutableStateOf("Chat") }
-    val icons = listOf(R.drawable.chat_bubble, R.drawable.menu)
+    val icons = listOf(R.drawable.chat_bubble, R.drawable.search, R.drawable.menu)
     NavigationBar(
         modifier = modifier
     ) {

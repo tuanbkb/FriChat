@@ -1,13 +1,12 @@
 package com.example.frichat.data.repository
 
-import android.net.Uri
-import android.util.Log
 import com.example.frichat.data.mapper.UserMapper
 import com.example.frichat.data.model.UserDTO
 import com.example.frichat.domain.model.User
 import com.example.frichat.domain.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -45,6 +44,23 @@ class UserRepositoryImpl @Inject constructor(
                 mapOf("username" to username)
             ).await()
             Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun searchUserByUsername(username: String): Result<List<User>> {
+        return try {
+            val result = firestore.collection("users").orderBy("username")
+                .startAt(username)
+                .endAt(username + "\uf8ff")
+                .get().await()
+            if (result.documents.isEmpty()) return Result.success(emptyList())
+            Result.success(result.documents.mapNotNull {
+                UserMapper.mapToDomain(
+                    it.toObject(UserDTO::class.java) ?: UserDTO()
+                )
+            })
         } catch (e: Exception) {
             Result.failure(e)
         }
