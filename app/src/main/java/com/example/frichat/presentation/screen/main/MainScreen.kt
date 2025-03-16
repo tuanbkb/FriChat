@@ -57,7 +57,8 @@ fun MainBottomBar(navController: NavController, modifier: Modifier = Modifier) {
             NavigationBarItem(
                 selected = currentScreen.value == screen,
                 onClick = {
-                    navController.navigate(screen)
+                    if (navController.currentDestination?.route != screen)
+                        navController.navigate(screen)
                     currentScreen.value = screen
                 },
                 icon = {
