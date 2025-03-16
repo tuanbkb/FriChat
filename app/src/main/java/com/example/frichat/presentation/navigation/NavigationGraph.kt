@@ -1,10 +1,7 @@
 package com.example.frichat.presentation.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.frichat.presentation.screen.login.LoginScreen
@@ -52,7 +49,7 @@ fun NavigationGraph(
                 },
                 onLogout = {
                     navController.navigate(Screen.LoginScreen.route) {
-                        popUpTo(Screen.MainScreen.route + "/{chatId}/{targetId}") {
+                        popUpTo(Screen.MainScreen.route) {
                             inclusive = true
                         }
                     }
@@ -65,7 +62,11 @@ fun NavigationGraph(
                 userViewModel = userViewModel,
                 chatId = it.arguments?.getString("chatId") ?: "",
                 targetId = it.arguments?.getString("targetId") ?: "",
-                onReturnClick = { navController.navigateUp() }
+                onReturnClick = { navController.navigate(Screen.MainScreen.route) {
+                    popUpTo(Screen.MessageScreen.route + "/{chatId}/{targetId}") {
+                        inclusive = true
+                    }
+                } }
             )
         }
     }

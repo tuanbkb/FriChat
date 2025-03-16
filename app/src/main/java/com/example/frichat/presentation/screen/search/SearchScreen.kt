@@ -1,7 +1,7 @@
 package com.example.frichat.presentation.screen.search
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,14 +33,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.frichat.domain.model.User
-import com.example.frichat.ui.theme.AppTheme
 
 @Composable
 fun SearchScreen(
+    onUserClick: (String, String) -> Unit,
     viewModel: SearchViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -54,7 +52,9 @@ fun SearchScreen(
         SearchBar(viewModel = viewModel)
         Spacer(modifier = Modifier.height(16.dp))
         SearchResult(
-            searchResult = state.searchResult
+            searchResult = state.searchResult,
+            onUserClick = onUserClick,
+            viewModel = viewModel
         )
     }
 }
@@ -90,6 +90,8 @@ fun SearchBar(
 @Composable
 fun SearchResult(
     searchResult: List<User>,
+    onUserClick: (String, String) -> Unit,
+    viewModel: SearchViewModel,
     modifier: Modifier = Modifier
 ) {
     if (searchResult.isEmpty()) {
@@ -102,7 +104,7 @@ fun SearchResult(
     } else {
         LazyColumn {
             items(searchResult) { user ->
-                SearchItem(user = user)
+                SearchItem(user = user, onUserClick = onUserClick, viewModel = viewModel)
             }
         }
     }
@@ -111,12 +113,17 @@ fun SearchResult(
 @Composable
 fun SearchItem(
     user: User,
+    onUserClick: (String, String) -> Unit,
+    viewModel: SearchViewModel,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable {
+                viewModel.onUserClick(user.uid, onUserClick)
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -150,13 +157,5 @@ fun SearchItem(
                 color = MaterialTheme.colorScheme.outline
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SearchScreenPreview() {
-    AppTheme {
-        SearchScreen()
     }
 }

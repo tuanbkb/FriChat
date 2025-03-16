@@ -4,5 +4,6 @@ import com.example.frichat.domain.model.User
 
 data class SearchState(
     val searchQuery: String = "",
-    val searchResult: List<User> = emptyList()
+    val searchResult: List<User> = emptyList(),
+    val loading: Boolean = false
 )

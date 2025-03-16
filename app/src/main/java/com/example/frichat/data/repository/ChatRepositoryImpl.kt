@@ -6,14 +6,15 @@ import com.example.frichat.data.model.ChatDTO
 import com.example.frichat.domain.model.Chat
 import com.example.frichat.domain.repository.ChatRepository
 import com.example.frichat.domain.repository.UserRepository
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class ChatRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -24,7 +25,6 @@ class ChatRepositoryImpl @Inject constructor(
         viewModelScope: CoroutineScope,
         onChatUpdate: (List<Chat>) -> Unit
     ): ListenerRegistration {
-        val ref = firestore.collection("chats").whereArrayContains("users", uid)
         return firestore.collection("chats").whereArrayContains("users", uid)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) return@addSnapshotListener
@@ -37,5 +37,36 @@ class ChatRepositoryImpl @Inject constructor(
                     onChatUpdate(updatedChat)
                 }
             }
+    }
+
+    override suspend fun getOrCreateChatByUsers(userId1: String, userId2: String): String {
+        val querySnap = firestore.collection("chats")
+            .whereArrayContains("users", userId1)
+            .get().await()
+        val result = querySnap.documents.firstOrNull { doc ->
+            val users = doc.get("users") as? List<String> ?: emptyList()
+            userId2 in users
+        }
+
+        if (result != null) {
+            return result.id
+        }
+
+        val newChat = ChatDTO(
+            id = "",
+            lastMessage = "",
+            updateAt = Timestamp.now(),
+            users = listOf(userId1, userId2)
+        )
+
+        return suspendCoroutine { continuation ->
+            firestore.collection("chats").add(newChat).addOnSuccessListener { doc ->
+                Log.d("DEBUG", "New chat created: ${doc.id}")
+                val chatId = doc.id
+                firestore.collection("chats").document(chatId).update("id", chatId)
+                continuation.resume(chatId)
+            }
+        }
+
     }
 }

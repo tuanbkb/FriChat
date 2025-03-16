@@ -32,7 +32,9 @@ fun MainScreenNavigationGraph(
         }
 
         composable("Search") {
-            SearchScreen()
+            SearchScreen(
+                onUserClick = onChatClick
+            )
         }
     }
 }

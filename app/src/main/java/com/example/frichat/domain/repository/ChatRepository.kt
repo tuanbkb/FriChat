@@ -10,4 +10,9 @@ interface ChatRepository {
         viewModelScope: CoroutineScope,
         onChatUpdate: (List<Chat>) -> Unit
     ): ListenerRegistration
+
+    suspend fun getOrCreateChatByUsers(
+        userId1: String,
+        userId2: String
+    ): String
 }

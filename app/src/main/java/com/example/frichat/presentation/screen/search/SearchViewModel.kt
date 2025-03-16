@@ -1,7 +1,9 @@
 package com.example.frichat.presentation.screen.search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.frichat.domain.usecase.GetOrCreateChatUseCase
 import com.example.frichat.domain.usecase.SearchUserUseCase
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val searchUserUseCase: SearchUserUseCase
+    private val searchUserUseCase: SearchUserUseCase,
+    private val getOrCreateChatUseCase: GetOrCreateChatUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = _state.asStateFlow()
@@ -27,7 +30,6 @@ class SearchViewModel @Inject constructor(
 
     fun onSearchQueryChange(searchQuery: String) {
         _state.update { it.copy(searchQuery = searchQuery) }
-//        _searchQuery.value = searchQuery
     }
 
     init {
@@ -39,6 +41,15 @@ class SearchViewModel @Inject constructor(
                     val filteredResult = result.filter { it.uid != userId }
                     _state.update { it.copy(searchResult = filteredResult) }
                 }
+        }
+    }
+
+    fun onUserClick(targetId: String, onGetChatIdComplete: (String, String) -> Unit) {
+        viewModelScope.launch {
+            _state.update { it.copy(loading = true) }
+            val chatId = getOrCreateChatUseCase(userId, targetId)
+            Log.d("DEBUG", "New chat ID: $chatId")
+            onGetChatIdComplete(chatId, targetId)
         }
     }
 }
