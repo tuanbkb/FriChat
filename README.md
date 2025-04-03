@@ -25,6 +25,7 @@ This is a messaging application for Android phone, built with Kotlin Jetpack Com
 ## Images
 
 Some screenshots of the application:
+
 ![image](https://github.com/user-attachments/assets/2888823d-87e9-4345-8919-06f18bbce1bb)
 ![image](https://github.com/user-attachments/assets/0d663007-6585-47e7-a830-556995edd71e)
 ![image](https://github.com/user-attachments/assets/a76334d5-312c-4780-893d-f9f4bd44d137)
